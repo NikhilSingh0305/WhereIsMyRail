@@ -1,24 +1,30 @@
 package com.example.buildjetpackcomposeapplicationexamples.ui
 
-import android.R.id.content
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,23 +39,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.buildjetpackcomposeapplicationexamples.R
+import com.example.buildjetpackcomposeapplicationexamples.ui.DifferentUiComponents.setupExpressAndMetroUI
 import com.example.buildjetpackcomposeapplicationexamples.ui.ui.theme.BuildJetpackComposeApplicationExamplesTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-
+    var name: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContent {
             BuildJetpackComposeApplicationExamplesTheme(
                 darkTheme = false
             ) {
-                Box(modifier = Modifier.fillMaxSize().background(Color.White)){
-                    navigationDrawer()
+                var userName = userApiCall()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                ) {
+                    name = userName.ifBlank {
+                        "Yatri"
+                    }
+                    navigationDrawer(name)
                 }
             }
         }
@@ -58,20 +75,71 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
-private fun navigationDrawer() {
+private fun navigationDrawer(userName: String?) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-
-
+            ModalDrawerSheet(modifier = Modifier.width(300.dp).fillMaxSize().verticalScroll(rememberScrollState())) {
+                Row(modifier = Modifier.padding(10.dp)) {
+                    pictureFormation(60)
+                    Text(
+                        "Welcome : $userName",
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .basicMarquee(),
+                        maxLines = 1
+                    )
+                }
+                callHorizontalLine()
+                Column(Modifier.fillMaxSize(.90f)) {
+                    NavigationDrawerItem(
+                        label = { Text("Update Timetable") },
+                        selected = false,
+                        icon = { Icon(painter = painterResource(R.drawable.drawer_first_icon), modifier = Modifier
+                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                            .size(20.dp), contentDescription = null) },
+                        onClick = { Log.e("nikh", "navigationDrawer: update TimeTable Called" ) }
+                    )
+                    NavigationDrawerItem(
+                        label = { Text("Clear Recent Searches") },
+                        selected = false,
+                        icon = { Icon(painter = painterResource(R.drawable.clear_recent_search), modifier = Modifier
+                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                            .size(20.dp), contentDescription = null) },
+                        onClick = { Log.e("nikh", "navigationDrawer: Clear Recent Searches" ) }
+                    )
+                    NavigationDrawerItem(
+                        label = { Text("Change City") },
+                        selected = false,
+                        icon = { Icon(painter = painterResource(R.drawable.change_city), modifier = Modifier
+                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                            .size(20.dp), contentDescription = null) },
+                        onClick = { Log.e("nikh", "navigationDrawer: Change City" ) }
+                    )
+                    NavigationDrawerItem(
+                        label = { Text("Settings") },
+                        selected = false,
+                        icon = { Icon(painter = painterResource(R.drawable.rail_setting), modifier = Modifier
+                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                            .size(20.dp), contentDescription = null) },
+                        // Placeholder badge = { Text("20") },
+                        onClick = { Log.e("nikh", "navigationDrawer: Settings" ) }
+                    )
+                }
+                callHorizontalLine()
+                Column(
+                    modifier = Modifier.padding(10.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text("App Version : 0.1")
+                }
             }
-        }
-    ){
+        },
+        modifier = Modifier.background(Color.LightGray).statusBarsPadding().navigationBarsPadding()
+    ) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -87,14 +155,13 @@ private fun navigationDrawer() {
 
                         }
 
-                            },
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
                                 if (drawerState.isClosed) {
                                     drawerState.open()
-                                }
-                                else {
+                                } else {
                                     drawerState.close()
                                 }
                             }
@@ -105,10 +172,38 @@ private fun navigationDrawer() {
                 )
             }
         ) { innerPadding ->
-
-            
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            )
+            {
+                setupExpressAndMetroUI()
+            }
         }
     }
+}
+
+private fun userApiCall(): String {
+    return ""
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun callTheUiOfMainActivity(){
+    BuildJetpackComposeApplicationExamplesTheme {
+        navigationDrawer("")
+    }
+}
+
+
+@Composable
+fun callHorizontalLine() {
+    HorizontalDivider(
+        modifier = Modifier.padding(vertical = 8.dp),
+        thickness = 1.dp,
+        color = Color.LightGray
+    )
 }
 
 
