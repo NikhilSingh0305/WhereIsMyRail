@@ -63,4 +63,13 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:3.0.0")
     implementation ("com.squareup.retrofit2:converter-gson:3.0.0")
 
+    implementation("androidx.room:room-runtime:2.8.4")
+    annotationProcessor("androidx.room:room-compiler:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    implementation("androidx.room:room-rxjava2:2.8.4")
+    implementation("androidx.room:room-rxjava3:2.8.4")
+    implementation("androidx.room:room-guava:2.8.4")
+    testImplementation("androidx.room:room-testing:2.8.4")
+    implementation("androidx.room:room-paging:2.8.4")
+
 }
