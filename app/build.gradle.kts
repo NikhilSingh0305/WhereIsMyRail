@@ -71,5 +71,6 @@ dependencies {
     implementation("androidx.room:room-guava:2.8.4")
     testImplementation("androidx.room:room-testing:2.8.4")
     implementation("androidx.room:room-paging:2.8.4")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
 }

@@ -1,5 +1,6 @@
 package com.example.buildjetpackcomposeapplicationexamples.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -41,10 +42,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.buildjetpackcomposeapplicationexamples.R
+import com.example.buildjetpackcomposeapplicationexamples.ui.DifferentUiComponents.AppNavigation
 import com.example.buildjetpackcomposeapplicationexamples.ui.DifferentUiComponents.setupExpressAndMetroUI
 import com.example.buildjetpackcomposeapplicationexamples.ui.ui.theme.BuildJetpackComposeApplicationExamplesTheme
 import kotlinx.coroutines.launch
@@ -71,7 +75,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,10 +82,17 @@ class MainActivity : ComponentActivity() {
 private fun navigationDrawer(userName: String?) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val navController = rememberNavController()
+    val context = LocalContext.current
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet(modifier = Modifier.width(300.dp).fillMaxSize().verticalScroll(rememberScrollState())) {
+            ModalDrawerSheet(
+                modifier = Modifier
+                    .width(300.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
                 Row(modifier = Modifier.padding(10.dp)) {
                     pictureFormation(60)
                     Text(
@@ -98,35 +108,79 @@ private fun navigationDrawer(userName: String?) {
                     NavigationDrawerItem(
                         label = { Text("Update Timetable") },
                         selected = false,
-                        icon = { Icon(painter = painterResource(R.drawable.drawer_first_icon), modifier = Modifier
-                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
-                            .size(20.dp), contentDescription = null) },
-                        onClick = { Log.e("nikh", "navigationDrawer: update TimeTable Called" ) }
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.drawer_first_icon),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                                    .size(20.dp),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+//                            context.startActivity(Intent(context, LoginActivity::class.java))
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     )
                     NavigationDrawerItem(
                         label = { Text("Clear Recent Searches") },
                         selected = false,
-                        icon = { Icon(painter = painterResource(R.drawable.clear_recent_search), modifier = Modifier
-                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
-                            .size(20.dp), contentDescription = null) },
-                        onClick = { Log.e("nikh", "navigationDrawer: Clear Recent Searches" ) }
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.clear_recent_search),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                                    .size(20.dp),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            Log.e("nikh", "navigationDrawer: Clear Recent Searches")
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     )
                     NavigationDrawerItem(
                         label = { Text("Change City") },
                         selected = false,
-                        icon = { Icon(painter = painterResource(R.drawable.change_city), modifier = Modifier
-                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
-                            .size(20.dp), contentDescription = null) },
-                        onClick = { Log.e("nikh", "navigationDrawer: Change City" ) }
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.change_city),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                                    .size(20.dp),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            Log.e("nikh", "navigationDrawer: Change City")
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     )
                     NavigationDrawerItem(
                         label = { Text("Settings") },
                         selected = false,
-                        icon = { Icon(painter = painterResource(R.drawable.rail_setting), modifier = Modifier
-                            .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
-                            .size(20.dp), contentDescription = null) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.rail_setting),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(2.dp, 2.dp, 2.dp, 2.dp))
+                                    .size(20.dp),
+                                contentDescription = null
+                            )
+                        },
                         // Placeholder badge = { Text("20") },
-                        onClick = { Log.e("nikh", "navigationDrawer: Settings" ) }
+                        onClick = {
+                            Log.e("nikh", "navigationDrawer: Settings")
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     )
                 }
                 callHorizontalLine()
@@ -138,7 +192,10 @@ private fun navigationDrawer(userName: String?) {
                 }
             }
         },
-        modifier = Modifier.background(Color.LightGray).statusBarsPadding().navigationBarsPadding()
+        modifier = Modifier
+            .background(Color.LightGray)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         Scaffold(
             topBar = {
@@ -148,13 +205,13 @@ private fun navigationDrawer(userName: String?) {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        )
+                        {
                             Text("Where Is My Rail")
                             Spacer(modifier = Modifier.padding(horizontal = 10.dp))
                             pictureFormation(70)
 
                         }
-
                     },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -172,13 +229,21 @@ private fun navigationDrawer(userName: String?) {
                 )
             }
         ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            )
-            {
-                setupExpressAndMetroUI()
+            Column {
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth()
+                        .background(Color.LightGray),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
+                    setupExpressAndMetroUI(navController)
+                }
+                Column(Modifier.fillMaxSize()) {
+                    AppNavigation(navController)
+                }
             }
         }
     }
@@ -190,7 +255,7 @@ private fun userApiCall(): String {
 
 @Preview(showBackground = true)
 @Composable
-private fun callTheUiOfMainActivity(){
+private fun callTheUiOfMainActivity() {
     BuildJetpackComposeApplicationExamplesTheme {
         navigationDrawer("")
     }
@@ -205,6 +270,7 @@ fun callHorizontalLine() {
         color = Color.LightGray
     )
 }
+
 
 
 
