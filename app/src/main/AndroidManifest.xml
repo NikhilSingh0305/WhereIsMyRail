@@ -18,11 +18,6 @@
             android:label="@string/title_activity_main_components"
             android:theme="@style/Theme.BuildJetpackComposeApplicationExamples" />
         <activity
-            android:name=".ui.Components.MainActivityComponents"
-            android:exported="false"
-            android:label="@string/title_activity_main_components"
-            android:theme="@style/Theme.BuildJetpackComposeApplicationExamples" />
-        <activity
             android:name=".ui.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login"

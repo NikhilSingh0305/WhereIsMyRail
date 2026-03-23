@@ -37,8 +37,8 @@ fun setupExpressAndMetroUI() {
             onClick = {
                 isClick = true
             }, colors = ButtonDefaults.buttonColors(
-                containerColor = if (!isClick) Color.Red else Color.Blue, // Background color
-                contentColor = if (!isClick) Color.White else Color.Black // Optional: Text/Icon color
+                containerColor = if (!isClick) Color.Red else Color.Blue,
+                contentColor = if (!isClick) Color.White else Color.Black
             )
         ) {
             Text("Express")
