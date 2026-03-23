@@ -59,7 +59,7 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            _root_ide_package_.com.example.buildjetpackcomposeapplicationexamples.ui.theme.BuildJetpackComposeApplicationExamplesTheme {
+            BuildJetpackComposeApplicationExamplesTheme {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
