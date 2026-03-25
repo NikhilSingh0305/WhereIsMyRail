@@ -1,5 +1,6 @@
 package com.example.buildjetpackcomposeapplicationexamples.ui.DifferentUiComponents
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -78,12 +79,14 @@ fun AppNavigation(navController: NavHostController) {
     }
 }
 
+@SuppressLint("ComposableNaming")
 @Preview(showBackground = true)
 @Composable
 fun expressLayout() {
-    Text("Express Layout")
+
 }
 
+@SuppressLint("ComposableNaming")
 @Composable
 private fun metroScreen() {
     Text("metro Layout")

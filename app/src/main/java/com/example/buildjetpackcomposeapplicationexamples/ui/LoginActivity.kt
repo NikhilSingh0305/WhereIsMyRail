@@ -2,10 +2,10 @@ package com.example.buildjetpackcomposeapplicationexamples.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,13 +28,14 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +52,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.buildjetpackcomposeapplicationexamples.Data.Models.FirstApiResponseModel
+import com.example.buildjetpackcomposeapplicationexamples.Data.Models.FirstApiResponseModelItem
 import com.example.buildjetpackcomposeapplicationexamples.R
+import com.example.buildjetpackcomposeapplicationexamples.Utils.ApiResponse
+import com.example.buildjetpackcomposeapplicationexamples.ViewModels.LoginViewModel
 import com.example.buildjetpackcomposeapplicationexamples.ui.ui.theme.BuildJetpackComposeApplicationExamplesTheme
 
 class LoginActivity : ComponentActivity() {
+
+    private val loginViewModel : LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +88,7 @@ class LoginActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(10.dp))
                         enterPassword()
                         Spacer(modifier = Modifier.height(10.dp))
-                        submitButton()
+                        submitButton(loginViewModel)
                         Spacer(modifier = Modifier.height(50.dp))
                     }
                 }
@@ -99,7 +106,9 @@ fun pictureFormation(pictureSize : Int ) {
             painter = painterResource(id = R.drawable.train_logo),
             contentDescription = "Background Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.clip(CircleShape).size(pictureSize.dp)
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(pictureSize.dp)
         )
     }
 
@@ -171,15 +180,15 @@ fun enterPassword() {
     )
 }
 
-@Preview(showBackground = true)
 @Composable
-fun submitButton() {
+fun submitButton(loginViewModel: LoginViewModel) {
+    val loginState by loginViewModel.fetchValue.collectAsState()
     val context = LocalContext.current
     Button(modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 10.dp),
         onClick = {
-            callingApiForGettingLoginCredential(context)
+            loginViewModel.callFirstApiFromRepo()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor =  Color(0xFF0A1F44),
@@ -188,8 +197,26 @@ fun submitButton() {
     ) {
         Text("Submit")
     }
+    callingApiForGettingLoginCredential(context,loginState)
 }
 
-fun callingApiForGettingLoginCredential(context: Context) {
-    Toast.makeText(context, "The Button is Clicked", Toast.LENGTH_SHORT).show()
+@Composable
+fun callingApiForGettingLoginCredential(context: Context, apiValues: ApiResponse<List<FirstApiResponseModelItem>>) {
+    when(apiValues){
+        is ApiResponse.Success ->{
+            for (i in apiValues.data.indices){
+                Text("${apiValues.data[i].id}")
+            }
+        }
+        is ApiResponse.Error -> {
+            Log.e("nik", "callingApiForGettingLoginCredential: "+apiValues.message )
+        }
+        is ApiResponse.Loading -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is ApiResponse.IdleState -> {}
+    }
 }
+

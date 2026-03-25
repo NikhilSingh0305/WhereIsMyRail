@@ -118,7 +118,7 @@ private fun navigationDrawer(userName: String?) {
                             )
                         },
                         onClick = {
-//                            context.startActivity(Intent(context, LoginActivity::class.java))
+                            context.startActivity(Intent(context, LoginActivity::class.java))
                             scope.launch {
                                 drawerState.close()
                             }
