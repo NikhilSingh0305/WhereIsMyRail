@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.flowOn
 class ApiRepository {
     fun getFirstApiResponse(): Flow<List<FirstApiResponseModelItem>> = flow {
         val callingApiRepoFunction = RetrofitInstance.api.getFirstApiCall()
-        delay(2000)
         emit(callingApiRepoFunction)
     }.flowOn(Dispatchers.IO)
 }
