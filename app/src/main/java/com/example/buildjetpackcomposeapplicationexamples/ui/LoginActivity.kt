@@ -9,8 +9,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +32,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,9 +56,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.buildjetpackcomposeapplicationexamples.Data.Models.FirstApiResponseModel
 import com.example.buildjetpackcomposeapplicationexamples.Data.Models.FirstApiResponseModelItem
 import com.example.buildjetpackcomposeapplicationexamples.R
 import com.example.buildjetpackcomposeapplicationexamples.Utils.ApiResponse
@@ -61,7 +67,7 @@ import com.example.buildjetpackcomposeapplicationexamples.ui.ui.theme.BuildJetpa
 
 class LoginActivity : ComponentActivity() {
 
-    private val loginViewModel : LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,9 +104,8 @@ class LoginActivity : ComponentActivity() {
 }
 
 
-
 @Composable
-fun pictureFormation(pictureSize : Int ) {
+fun pictureFormation(pictureSize: Int) {
     Column {
         Image(
             painter = painterResource(id = R.drawable.train_logo),
@@ -118,15 +123,16 @@ fun pictureFormation(pictureSize : Int ) {
 @Composable
 fun enterName() {
     var nameText by remember { mutableStateOf("") }
-    TextField(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 10.dp)
-        .padding(vertical = 5.dp)
-        .border(
-            width = 1.dp,
-            color = Color(0xFF0A1F44),
-            shape = RoundedCornerShape(8.dp)
-        ),
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .padding(vertical = 5.dp)
+            .border(
+                width = 1.dp,
+                color = Color(0xFF0A1F44),
+                shape = RoundedCornerShape(8.dp)
+            ),
         value = nameText,
         onValueChange = { it -> nameText = it },
         label = { Text("Enter The Name") },
@@ -146,15 +152,16 @@ fun enterName() {
 fun enterPassword() {
     var passwordText by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
-    TextField(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 10.dp)
-        .padding(vertical = 5.dp)
-        .border(
-            width = 1.dp,
-            color = Color(0xFF0A1F44),
-            shape = RoundedCornerShape(8.dp)
-        ),
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .padding(vertical = 5.dp)
+            .border(
+                width = 1.dp,
+                color = Color(0xFF0A1F44),
+                shape = RoundedCornerShape(8.dp)
+            ),
         value = passwordText,
         onValueChange = { it -> passwordText = it },
         label = { Text("Enter The Password") },
@@ -184,39 +191,103 @@ fun enterPassword() {
 fun submitButton(loginViewModel: LoginViewModel) {
     val loginState by loginViewModel.fetchValue.collectAsState()
     val context = LocalContext.current
-    Button(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 10.dp),
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
         onClick = {
             loginViewModel.callFirstApiFromRepo()
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor =  Color(0xFF0A1F44),
+            containerColor = Color(0xFF0A1F44),
             contentColor = Color.White
         )
     ) {
         Text("Submit")
     }
-    callingApiForGettingLoginCredential(context,loginState)
+    callingApiForGettingLoginCredential(context, loginState)
 }
 
 @Composable
-fun callingApiForGettingLoginCredential(context: Context, apiValues: ApiResponse<List<FirstApiResponseModelItem>>) {
-    when(apiValues){
-        is ApiResponse.Success ->{
-            for (i in apiValues.data.indices){
-                Text("${apiValues.data[i].id}")
-            }
+fun callingApiForGettingLoginCredential(
+    context: Context,
+    apiValues: ApiResponse<List<FirstApiResponseModelItem>>
+) {
+    when (apiValues) {
+        is ApiResponse.Success -> {
+            RecyclerViewLayout(apiValues.data)
         }
+
         is ApiResponse.Error -> {
-            Log.e("nik", "callingApiForGettingLoginCredential: "+apiValues.message )
+            Log.e("nik", "callingApiForGettingLoginCredential: " + apiValues.message)
         }
+
         is ApiResponse.Loading -> {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         }
+
         is ApiResponse.IdleState -> {}
     }
 }
+
+
+@Composable
+fun RecyclerViewLayout(data: List<FirstApiResponseModelItem>) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+    ) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.height(300.dp)
+        ) {
+            items(data.size) { it ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .clickable {
+                            Log.e("nik", "callingApiForGettingLoginCredential: ${data[it].id}")
+                        },
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
+                ) {
+                    Row {
+                        Text(
+                            text = data[it].id.toString(),
+                            color = Color.Black,
+                            modifier = Modifier
+                                .padding(8.dp),
+                            textAlign = TextAlign.Start,
+                        )
+                        Spacer(Modifier.size(10.dp))
+                        Text(
+                            text = data[it].title,
+                            color = Color.Black,
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .clickable {
+                                    Log.e(
+                                        "nik",
+                                        "callingApiForGettingLoginCredential: ${data[it].id}"
+                                    )
+                                },
+                            textAlign = TextAlign.Start,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 
