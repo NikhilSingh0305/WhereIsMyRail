@@ -35,6 +35,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -207,12 +208,16 @@ private fun navigationDrawer(userName: String?) {
                             verticalAlignment = Alignment.CenterVertically
                         )
                         {
-                            Text("Where Is My Rail")
+//                            Text("Where Is My Rail")
                             Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                            pictureFormation(70)
+//                            pictureFormation(70)
 
                         }
                     },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color(0xFF1A237E), // Dark Indigo
+                        titleContentColor = Color.White
+                    ),
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
@@ -223,30 +228,38 @@ private fun navigationDrawer(userName: String?) {
                                 }
                             }
                         }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            Icon(Icons.Default.Menu,
+                                tint = Color.White, contentDescription = "Menu")
                         }
                     }
                 )
             }
         ) { innerPadding ->
-            Column {
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth()
-                        .background(Color.LightGray),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                )
-                {
-                    setupExpressAndMetroUI(navController)
+            Column(modifier = Modifier.background(Color(0xFF2C2376)).padding(innerPadding)) {
+                Column(modifier = Modifier.fillMaxSize()
+                    .clip(shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
+                    .background(Color.White)) {
+                    Column(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .background(Color.White)
+                            .clip(shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp)),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
+                    {
+                        setupExpressAndMetroUI(navController)
+                    }
+                    Column(Modifier.fillMaxSize()) {
+                        AppNavigation(navController)
+                    }
                 }
-                Column(Modifier.fillMaxSize()) {
-                    AppNavigation(navController)
-                }
+
             }
         }
     }
+
+
 }
 
 private fun userApiCall(): String {

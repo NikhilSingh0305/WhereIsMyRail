@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -26,13 +27,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.buildjetpackcomposeapplicationexamples.Data.Models.FirstApiResponseModelItem
+import com.example.buildjetpackcomposeapplicationexamples.ui.theme.BuildJetpackComposeApplicationExamplesTheme
 
 
 class MainActivityComponents : ComponentActivity() {
@@ -54,7 +58,7 @@ fun setupExpressAndMetroUI(navController: NavHostController) {
                 isClick = true
                 navController.navigate("express")
             }, colors = ButtonDefaults.buttonColors(
-                containerColor = if (isClick) Color.Black else Color.Gray,
+                containerColor = if (isClick) Color(0XFF6A5AE0) else Color.LightGray,
                 contentColor = if (isClick) Color.White else Color.White
             ), modifier = Modifier
                 .weight(1f)
@@ -69,7 +73,7 @@ fun setupExpressAndMetroUI(navController: NavHostController) {
                 isClick = false
                 navController.navigate("metro")
             }, colors = ButtonDefaults.buttonColors(
-                containerColor = if (!isClick) Color.Black else Color.Gray,
+                containerColor = if (!isClick) Color(0XFF6A5AE0)  else  Color.LightGray,
                 contentColor = if (!isClick) Color.White else Color.White
             ), modifier = Modifier
                 .weight(1f)
@@ -98,6 +102,24 @@ fun AppNavigation(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun expressLayout() {
+    Card( modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp),
+        shape = RoundedCornerShape(
+            topStart = 20.dp,
+            topEnd = 20.dp,
+            bottomStart = 20.dp,
+            bottomEnd = 20.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        )) {
+
+
+    }
 
 }
 
@@ -106,3 +128,4 @@ fun expressLayout() {
 private fun metroScreen() {
     Text("metro Layout")
 }
+
